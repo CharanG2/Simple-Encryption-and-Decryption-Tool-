@@ -1,0 +1,92 @@
+from cryptography.fernet import Fernet 
+# Generate and save a key 
+def generate_key(): 
+key = Fernet.generate_key() 
+with open("secret.key", "wb") as key_file: 
+key_file.write(key) 
+print("Key generated and saved as 'secret.key'") 
+# Load the key from a file 
+def load_key(): 
+try: 
+with open("secret.key", "rb") as key_file: 
+return key_file.read() 
+except FileNotFoundError: 
+print("Key file not found. Generate a new key first.") 
+return None 
+# Encrypt the plaintext 
+def encrypt_data(plaintext, key): 
+fernet = Fernet(key) 
+encrypted = fernet.encrypt(plaintext.encode()) 
+return encrypted 
+# Decrypt the ciphertext 
+def decrypt_data(ciphertext, key): 
+fernet = Fernet(key) 
+try: 
+decrypted = fernet.decrypt(ciphertext).decode() 
+return decrypted 
+except Exception as e: 
+print("Decryption failed:", str(e)) 
+return None 
+# Save encrypted data to a file 
+def save_encrypted_data(filename, encrypted_data): 
+with open(filename, "wb") as file: 
+file.write(encrypted_data) 
+print(f"Encrypted data saved to {filename}") 
+# Load encrypted data from a file 
+def load_encrypted_data(filename): 
+try: 
+with open(filename, "rb") as file: 
+return file.read() 
+except FileNotFoundError: 
+print(f"File {filename} not found.") 
+return None 
+# Main menu 
+def main(): 
+print("Simple Encryption and Decryption Tool") 
+while True: 
+print("\nMenu:") 
+print("1. Generate Key") 
+print("2. Encrypt Data") 
+print("3. Decrypt Data") 
+        print("4. Save Encrypted Data to File") 
+        print("5. Load Encrypted Data from File") 
+        print("6. Exit") 
+         
+        choice = input("Select an option: ") 
+        if choice == "1": 
+            generate_key() 
+        elif choice == "2": 
+            key = load_key() 
+            if key: 
+                plaintext = input("Enter plaintext: ") 
+                encrypted_data = encrypt_data(plaintext, key) 
+                print("Encrypted Data:", encrypted_data) 
+        elif choice == "3": 
+            key = load_key() 
+            if key: 
+                filename = input("Enter filename to load encrypted data from: ") 
+                encrypted_data = load_encrypted_data(filename) 
+                if encrypted_data: 
+                    decrypted_data = decrypt_data(encrypted_data, key) 
+                    if decrypted_data: 
+                        print("Decrypted Data:", decrypted_data) 
+        elif choice == "4": 
+            filename = input("Enter filename to save encrypted data: ") 
+            key = load_key() 
+            if key: 
+                plaintext = input("Enter plaintext: ") 
+                encrypted_data = encrypt_data(plaintext, key) 
+                save_encrypted_data(filename, encrypted_data) 
+        elif choice == "5": 
+filename = input("Enter filename to load encrypted data: ") 
+encrypted_data = load_encrypted_data(filename) 
+if encrypted_data: 
+print("Encrypted Data:", encrypted_data) 
+elif choice == "6": 
+print("Exiting...") 
+break 
+else: 
+print("Invalid option. Please try again.") 
+if __name__ == "__main__": 
+main() 
+
